@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PT AMF NUSANTARA GROUP - Sistem Manajemen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#f59e0b',
+                        success: '#10b981',
+                        dark: '#1f2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .sidebar-link {
+                @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-primary/10 hover:text-primary;
+            }
+            .sidebar-link.active {
+                @apply bg-primary/10 text-primary font-medium border-l-4 border-primary;
+            }
+            .card {
+                @apply bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow;
+            }
+            .btn {
+                @apply px-4 py-2 rounded-lg font-medium transition-all focus:ring-2 focus:ring-blue-300;
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-primary/90;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white hover:bg-secondary/90;
+            }
+            .input-field {
+                @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-dark">
+    <!-- Halaman Login -->
+    <div id="loginPage" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-900 to-blue-600">
+        <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-primary">PT AMF NUSANTARA GROUP</h1>
+                <p class="text-gray-500 mt-2">Sistem Manajemen Perusahaan</p>
+            </div>
+            
+            <div id="loginForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pengguna</label>
+                        <input type="text" id="username" class="input-field" placeholder="Masukkan nama pengguna">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
+                        <input type="password" id="password" class="input-field" placeholder="Masukkan kata sandi">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 text-sm text-gray-600">
+                            <input type="checkbox"> Ingat saya
+                        </label>
+                        <a href="#" class="text-sm text-primary hover:underline">Lupa kata sandi?</a>
+                    </div>
+                    <button onclick="login()" class="btn btn-primary w-full mt-2">Masuk ke Sistem</button>
+                </div>
+                <p id="errorMsg" class="text-red-500 text-sm mt-3 hidden text-center">Nama pengguna atau kata sandi salah!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplikasi Utama (Disembunyikan Sebelum Login) -->
+    <div id="appContainer" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md fixed h-screen z-10 transition-all">
+            <div class="p-4 border-b border-gray-100">
+                <h1 class="text-xl font-bold text-primary">PT AMF NUSANTARA GROUP</h1>
+                <p class="text-sm text-gray-500 mt-1">Sistem Manajemen Terpadu</p>
+            </div>
+            
+            <nav class="p-4 space-y-2">
+                <a href="#" class="sidebar-link active" onclick="showSection('dashboard')">
+                    <i class="fa fa-home w-5 text-center"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('peta')">
+                    <i class="fa fa-map-marker w-5 text-center"></i>
+                    <span>Pembuatan Peta</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('desain')">
+                    <i class="fa fa-paint-brush w-5 text-center"></i>
+                    <span>Desain Grafis</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('madu')">
+                    <i class="fa fa-leaf w-5 text-center"></i>
+                    <span>Peternakan & Madu Trigona</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('hhbk')">
+                    <i class="fa fa-tree w-5 text-center"></i>
+                    <span>HHBK</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('laporan')">
+                    <i class="fa fa-file-text w-5 text-center"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="#" class="sidebar-link" onclick="showSection('pengaturan')">
+                    <i class="fa fa-cog w-5 text-center"></i>
+                    <span>Pengaturan</span>
+                </a>
+                <a href="#" class="sidebar-link text-red-500 mt-8" onclick="logout()">
+                    <i class="fa fa-sign-out w-5 text-center"></i>
+                    <span>Keluar</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Konten Utama -->
+        <main class="ml-64 flex-1 p-6 bg-gray-50">
+            <!-- Header Atas -->
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 id="pageTitle" class="text-2xl font-bold text-dark">Dashboard</h2>
+                    <p class="text-gray-500">Selamat datang di Sistem Manajemen PT AMF NUSANTARA GROUP</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="userInfo" class="text-sm font-medium"></span>
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Bagian Dashboard -->
+            <section id="dashboardSection" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card border-t-4 border-blue-500">
+                        <h3 class="text-gray-500 text-sm">Proyek Peta</h3>
+                        <p class="text-3xl font-bold mt-2">24</p>
+                        <p class="text-green-500 text-sm mt-1"><i class="fa fa-arrow-up"></i> 12% bulan ini</p>
+                    </div>
+                    <div class="card border-t-4 border-purple-500">
+                        <h3 class="text-gray-500 text-sm">Proyek Desain</h3>
+                        <p class="text-3xl font-bold mt-2">42</p>
+                        <p class="text-green-500 text-sm mt-1"><i class="fa fa-arrow-up"></i> 8% bulan ini</p>
+                    </div>
+                    <div class="card border-t-4 border-yellow-500">
+                        <h3 class="text-gray-500 text-sm">Produksi Madu Trigona</h3>
+                        <p class="text-3xl font-bold mt-2">18,5 Liter</p>
+                        <p class="text-green-500 text-sm mt-1"><i class="fa fa-arrow-up"></i> 15% bulan ini</p>
+                    </div>
+                    <div class="card border-t-4 border-green-500">
+                        <h3 class="text-gray-500 text-sm">Pendapatan Bulan Ini</h3>
+                        <p class="text-3xl font-bold mt-2">Rp 87 Juta</p>
+                        <p class="text-green-500 text-sm mt-1"><i class="fa fa-arrow-up"></i> 23% bulan ini</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="card">
+                        <h3 class="font-semibold mb-4">Proyek Terbaru</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-left border-b">
+                                        <th class="pb-2">No</th>
+                                        <th class="pb-2">Nama Proyek</th>
+                                        <th class="pb-2">Divisi</th>
+                                        <th class="pb-2">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-3">1</td>
+                                        <td>Peta Wilayah Kec. Makassar</td>
+                                        <td>Pembuatan Peta</td>
+                                        <td><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">Berjalan</span></td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-3">2</td>
+                                        <td>Desain Brosur Produk Madu</td>
+                                        <td>Desain Grafis</td>
+                                        <td><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Selesai</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3">3</td>
+                                        <td>Panen Koloni Trigona</td>
+                                        <td>Madu Trigona & HHBK</td>
+                                        <td><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Direncanakan</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-semibold mb-4">Divisi Usaha</h3>
+                        <div class="space-y-4">
+                            <div class="p-3 bg-blue-50 rounded-lg">
+                                <h4 class="font-medium text-primary">📍 Pembuatan Peta</h4>
+                                <p class="text-sm text-gray-600 mt-1">Pembuatan peta digital, survei pemetaan, pemetaan wilayah dan konsultan pemetaan.</p>
+                            </div>
+                            <div class="p-3 bg-purple-50 rounded-lg">
+                                <h4 class="font-medium text-purple-600">🎨 Desain Grafis</h4>
+                                <p class="text-sm text-gray-600 mt-1">Jasa desain logo, brosur, kemasan, identitas perusahaan dan kebutuhan promosi.</p>
+                            </div>
+                            <div class="p-3 bg-yellow-50 rounded-lg">
+                                <h4 class="font-medium text-yellow-600">🍯 Madu Trigona & HHBK</h4>
+                                <p class="text-sm text-gray-600 mt-1">Peternakan lebah trigona, produksi madu murni, dan pengelolaan hasil hutan bukan kayu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian Pembuatan Peta -->
+            <section id="petaSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Manajemen Proyek Pembuatan Peta</h3>
+                    <p class="text-gray-600 mb-6">Kelola semua proyek pemetaan, data survei, dan status pengerjaan peta.</p>
+                    <button class="btn btn-primary mb-4" onclick="alert('Form tambah proyek peta akan muncul di sini')">
+                        <i class="fa fa-plus mr-2"></i> Tambah Proyek Peta
+                    </button>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 border-b text-left">ID Proyek</th>
+                                    <th class="px-4 py-2 border-b text-left">Nama Proyek</th>
+                                    <th class="px-4 py-2 border-b text-left">Lokasi</th>
+                                    <th class="px-4 py-2 border-b text-left">Tanggal</th>
+                                    <th class="px-4 py-2 border-b text-left">Status</th>
+                                    <th class="px-4 py-2 border-b text-left">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border-b">PETA-001</td>
+                                    <td class="px-4 py-2 border-b">Peta Administrasi Kecamatan</td>
+                                    <td class="px-4 py-2 border-b">Makassar</td>
+                                    <td class="px-4 py-2 border-b">07/08/2026</td>
+                                    <td class="px-4 py-2 border-b"><span class="px-2 bg-yellow-100 rounded text-xs">Berjalan</span></td>
+                                    <td class="px-4 py-2 border-b">
+                                        <button class="text-blue-500 mr-2"><i class="fa fa-pencil"></i></button>
+                                        <button class="text-red-500"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian Desain Grafis -->
+            <section id="desainSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Manajemen Proyek Desain Grafis</h3>
+                    <p class="text-gray-600 mb-6">Kelola pesanan desain, kemajuan pengerjaan, dan arsip karya desain.</p>
+                    <button class="btn btn-primary mb-4">
+                        <i class="fa fa-plus mr-2"></i> Tambah Pesanan Desain
+                    </button>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 border-b text-left">ID</th>
+                                    <th class="px-4 py-2 border-b text-left">Jenis Desain</th>
+                                    <th class="px-4 py-2 border-b text-left">Klien</th>
+                                    <th class="px-4 py-2 border-b text-left">Tenggat</th>
+                                    <th class="px-4 py-2 border-b text-left">Status</th>
+                                    <th class="px-4 py-2 border-b text-left">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border-b">DSN-001</td>
+                                    <td class="px-4 py-2 border-b">Desain Kemasan Madu</td>
+                                    <td class="px-4 py-2 border-b">Internal</td>
+                                    <td class="px-4 py-2 border-b">15/08/2026</td>
+                                    <td class="px-4 py-2 border-b"><span class="px-2 bg-blue-100 rounded text-xs">Proses</span></td>
+                                    <td class="px-4 py-2 border-b">
+                                        <button class="text-blue-500 mr-2"><i class="fa fa-pencil"></i></button>
+                                        <button class="text-red-500"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian Madu Trigona & HHBK -->
+            <section id="maduSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Manajemen Peternakan Madu Trigona & HHBK</h3>
+                    <p class="text-gray-600 mb-6">Pantau koloni lebah, jadwal panen, stok madu, pemasaran, dan produk HHBK.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                            <h4 class="font-medium">Jumlah Koloni</h4>
+                            <p class="text-2xl font-bold text-yellow-700 mt-2">42 Koloni</p>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                            <h4 class="font-medium">Total Produksi</h4>
+                            <p class="text-2xl font-bold text-green-700 mt-2">18,5 Liter</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h4 class="font-medium">Stok Tersedia</h4>
+                            <p class="text-2xl font-bold text-blue-700 mt-2">12 Liter</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary mb-4">
+                        <i class="fa fa-plus mr-2"></i> Catat Panen / Tambah Produk
+                    </button>
+
+                    <h4 class="font-medium mt-6 mb-2">Daftar Produk Madu & HHBK</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 border-b text-left">Kode</th>
+                                    <th class="px-4 py-2 border-b text-left">Nama Produk</th>
+                                    <th class="px-4 py-2 border-b text-left">Jenis</th>
+                                    <th class="px-4 py-2 border-b text-left">Stok</th>
+                                    <th class="px-4 py-2 border-b text-left">Harga</th>
+                                    <th class="px-4 py-2 border-b text-left">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border-b">MDU-001</td>
+                                    <td class="px-4 py-2 border-b">Madu Trigona Asli</td>
+                                    <td class="px-4 py-2 border-b">Madu Trigona</td>
+                                    <td class="px-4 py-2 border-b">12 Liter</td>
+                                    <td class="px-4 py-2 border-b">Rp 350.000/L</td>
+                                    <td class="px-4 py-2 border-b">
+                                        <button class="text-blue-500 mr-2"><i class="fa fa-pencil"></i></button>
+                                        <button class="text-red-500"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 border-b">HHBK-001</td>
+                                    <td class="px-4 py-2 border-b">Propolis Trigona</td>
+                                    <td class="px-4 py-2 border-b">HHBK</td>
+                                    <td class="px-4 py-2 border-b">5 Botol</td>
+                                    <td class="px-4 py-2 border-b">Rp 120.000/botol</td>
+                                    <td class="px-4 py-2 border-b">
+                                        <button class="text-blue-500 mr-2"><i class="fa fa-pencil"></i></button>
+                                        <button class="text-red-500"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian HHBK -->
+            <section id="hhbkSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Pengelolaan Hasil Hutan Bukan Kayu (HHBK)</h3>
+                    <p class="text-gray-600 mb-6">Inventarisasi, pengolahan, dan pemasaran produk HHBK selain madu trigona.</p>
+                    <button class="btn btn-primary mb-4">
+                        <i class="fa fa-plus mr-2"></i> Tambah Produk HHBK
+                    </button>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 border-b text-left">Kode</th>
+                                    <th class="px-4 py-2 border-b text-left">Nama Produk</th>
+                                    <th class="px-4 py-2 border-b text-left">Asal</th>
+                                    <th class="px-4 py-2 border-b text-left">Satuan</th>
+                                    <th class="px-4 py-2 border-b text-left">Stok</th>
+                                    <th class="px-4 py-2 border-b text-left">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border-b">HHBK-002</td>
+                                    <td class="px-4 py-2 border-b">Minyak Atsiri</td>
+                                    <td class="px-4 py-2 border-b">Hutan</td>
+                                    <td class="px-4 py-2 border-b">Botol</td>
+                                    <td class="px-4 py-2 border-b">25</td>
+                                    <td class="px-4 py-2 border-b">Siap Jual</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian Laporan -->
+            <section id="laporanSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Laporan Perusahaan</h3>
+                    <p class="text-gray-600 mb-6">Laporan kinerja, penjualan, produksi dan keuangan PT AMF NUSANTARA GROUP.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button class="btn btn-primary text-left">
+                            <i class="fa fa-file-pdf-o mr-2"></i> Laporan Produksi Madu & HHBK
+                        </button>
+                        <button class="btn btn-primary text-left">
+                            <i class="fa fa-file-pdf-o mr-2"></i> Laporan Proyek Peta
+                        </button>
+                        <button class="btn btn-primary text-left">
+                            <i class="fa fa-file-pdf-o mr-2"></i> Laporan Proyek Desain
+                        </button>
+                        <button class="btn btn-primary text-left">
+                            <i class="fa fa-file-excel-o mr-2"></i> Laporan Penjualan & Keuangan
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian Pengaturan -->
+            <section id="pengaturanSection" class="hidden space-y-6">
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4">Pengaturan Sistem</h3>
+                    <div class="space-y-4 max-w-lg">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan</label>
+                            <input type="text" class="input-field" value="PT AMF NUSANTARA GROUP" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                            <textarea class="input-field" rows="2">Makassar, Sulawesi Selatan</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Bidang Usaha</label>
+                            <textarea class="input-field" rows="3">1. Pembuatan Peta&#10;2. Desain Grafis&#10;3. Peternakan & Pemasaran Madu Trigona serta HHBK</textarea>
+                        </div>
+                        <button class="btn btn-primary">Simpan Pengaturan</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Fungsi Login
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Contoh sederhana: ganti sesuai kebutuhan
+            if (username === 'admin' && password === 'amf2026') {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                document.getElementById('userInfo').textContent = 'Halo, ' + username;
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Fungsi Logout
+        function logout() {
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').classList.add('hidden');
+        }
+
+        // Tampilkan Bagian yang Dipilih
+        function showSection(sectionName) {
+            // Sembunyikan semua bagian
+            document.querySelectorAll('section').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+            // Hapus kelas aktif dari semua tautan
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Tampilkan bagian yang dipilih
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            
+            // Tandai tautan aktif
+            event.target.closest('.sidebar-link').classList.add('active');
+
+            // Ubah judul halaman
+            const pageTitles = {
+                dashboard: 'Dashboard',
+                peta: 'Pembuatan Peta',
+                desain: 'Desain Grafis',
+                madu: 'Peternakan & Madu Trigona',
+                hhbk: 'Hasil Hutan Bukan Kayu (HHBK)',
+                laporan: 'Laporan',
+                pengaturan: 'Pengaturan'
+            };
+            document.getElementById('pageTitle').textContent = pageTitles[sectionName];
+        }
+    </script>
+</body>
+</html>
